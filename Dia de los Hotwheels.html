@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hot Wheels Especial ❤️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #020208;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .phone-frame {
+      width: 100vw;
+      max-width: 420px;
+      height: 100vh;
+      max-height: 880px;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 198, 255, 0.3);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 15px;
+      z-index: 2;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* PANTALLA CÓDIGO */
+    .lock-screen {
+      background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
+      color: #0d47a1;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .hw-logo-svg {
+      width: 180px;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+    }
+
+    .lock-heart {
+      width: 110px;
+      height: 110px;
+      background: linear-gradient(135deg, #ffffff, #e0e0e0);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      border: 3px solid #1976d2;
+    }
+
+    .pin-display {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .pin-slot {
+      width: 45px;
+      height: 55px;
+      background: #fff;
+      border: 2px solid #1976d2;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 250px;
+    }
+
+    .key-btn {
+      width: 65px;
+      height: 65px;
+      background: #1565c0;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 800;
+      border: none;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(21, 101, 192, 0.4);
+      cursor: pointer;
+    }
+
+    .key-btn:active {
+      transform: scale(0.92);
+      background: #0d47a1;
+    }
+
+    .btn-main {
+      background: #1565c0;
+      color: #fff;
+      border: none;
+      padding: 12px 35px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: 25px;
+      box-shadow: 0 5px 15px rgba(21, 101, 192, 0.4);
+      cursor: pointer;
+    }
+
+    /* PANTALLA MENÚ */
+    .menu-screen {
+      background: radial-gradient(circle at center, #0a192f 0%, #020c1b 100%);
+      justify-content: space-around;
+      text-align: center;
+    }
+
+    .menu-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 28px;
+      color: #00d2ff;
+      text-shadow: 0 0 12px rgba(0,210,255,0.7);
+    }
+
+    .menu-buttons {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .btn-option {
+      width: 88%;
+      padding: 16px;
+      border-radius: 30px;
+      border: 2px solid rgba(255,255,255,0.2);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      color: white;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn-opt-1 { background: linear-gradient(90deg, #ff0055, #ff5500); }
+    .btn-opt-2 { background: linear-gradient(90deg, #7928ca, #ff0080); }
+    .btn-opt-3 { background: linear-gradient(90deg, #0072ff, #00c6ff); }
+
+    /* PANTALLA GALAXIA (IDÉNTICA AL VIDEO) */
+    .galaxy-screen {
+      background: #00020a;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .galaxy-spiral {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      top: 45%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(0, 180, 255, 0.8) 0%, rgba(138, 43, 226, 0.5) 35%, rgba(0, 0, 0, 0) 70%);
+      border-radius: 50%;
+      filter: blur(15px);
+      animation: spinGalaxy 20s linear infinite;
+    }
+
+    @keyframes spinGalaxy {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .galaxy-heart-center {
+      position: absolute;
+      top: 45%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .galaxy-heart-svg {
+      width: 65px;
+      filter: drop-shadow(0 0 15px #ff0055);
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.15); }
+    }
+
+    .galaxy-heart-label {
+      font-family: 'Pacifico', cursive;
+      color: #fff;
+      font-size: 18px;
+      text-shadow: 0 0 10px #ff0055;
+    }
+
+    .g-bubble {
+      position: absolute;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(5, 15, 35, 0.8);
+      border: 1px solid rgba(0, 212, 255, 0.6);
+      padding: 6px 12px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+      cursor: pointer;
+    }
+
+    .g-bubble span {
+      font-size: 11px;
+      font-weight: 800;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    /* PANTALLA RAMO (EXACTA AL VIDEO 3) */
+    .ramo-screen {
+      background: radial-gradient(circle at center, #0b1a30 0%, #020712 100%);
+      position: relative;
+      overflow: hidden;
+      justify-content: flex-start;
+    }
+
+    .ramo-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #00d2ff;
+      text-shadow: 0 0 10px rgba(0,210,255,0.8);
+      margin-top: 15px;
+      z-index: 10;
+    }
+
+    .ramo-container {
+      position: relative;
+      width: 100%;
+      height: 75vh;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Papel Envoltorio Azul del Ramo */
+    .ramo-wrap-back {
+      position: absolute;
+      bottom: 20px;
+      width: 310px;
+      height: 420px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e1b4b 100%);
+      clip-path: polygon(5% 0, 95% 0, 65% 100%, 35% 100%);
+      z-index: 2;
+    }
+
+    .ramo-wrap {
+      position: absolute;
+      bottom: 15px;
+      width: 280px;
+      height: 390px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      clip-path: polygon(0 0, 100% 0, 70% 100%, 30% 100%);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+      z-index: 3;
+    }
+
+    /* Margaritas Azules Realistas en SVG */
+    .daisy-flower {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      z-index: 4;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    }
+
+    /* Empaques de Hot Wheels en Blister Card */
+    .blister-card {
+      position: absolute;
+      width: 78px;
+      height: 105px;
+      background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 70%, #dc2626 100%);
+      border: 2px solid #fff;
+      border-radius: 8px;
+      z-index: 6;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4px;
+    }
+
+    .blister-card:active { transform: scale(1.1) !important; }
+
+    .blister-bubble {
+      width: 90%;
+      height: 58px;
+      background: rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 6px;
+      margin-top: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .blister-footer {
+      font-size: 8px;
+      font-weight: 900;
+      color: #fff;
+      margin-top: 3px;
+      text-transform: uppercase;
+    }
+
+    .floating-car {
+      position: absolute;
+      z-index: 7;
+      width: 70px;
+      cursor: pointer;
+      filter: drop-shadow(0 5px 8px rgba(0,0,0,0.6));
+    }
+
+    .btn-back-nav {
+      position: absolute;
+      bottom: 15px;
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 12;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.5);
+    }
+
+    /* TARJETA REDONDA CON LA FRASE Y PARRILLA DE CARRERAS */
+    .modal-backdrop {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 30;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-hw-card {
+      width: 290px;
+      background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+      border: 4px solid #facc15;
+      border-radius: 16px;
+      padding: 20px 15px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(250, 204, 21, 0.6);
+      position: relative;
+    }
+
+    .modal-hw-card p {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      margin: 18px 0;
+      line-height: 1.4;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .btn-modal-close {
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+
+  <!-- VISTA 1: PIN DE ACCESO -->
+  <div class="screen lock-screen active" id="sc-lock">
+    <!-- SVG del logo oficial de Hot Wheels -->
+    <svg class="hw-logo-svg" viewBox="0 0 300 100">
+      <path d="M10,50 Q150,0 290,50 Q150,100 10,50 Z" fill="#e60012"/>
+      <text x="50%" y="60%" font-family="'Pacifico', cursive" font-size="32" fill="#ffeb3b" text-anchor="middle" font-weight="bold">Hot Wheels</text>
+    </svg>
+    
+    <div class="lock-heart">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="#1565c0"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </div>
+
+    <h3 style="font-size: 16px; font-weight: 800;">Ingresa la contraseña</h3>
+
+    <div class="pin-display">
+      <div class="pin-slot" id="slot-1"></div>
+      <div class="pin-slot" id="slot-2"></div>
+      <div class="pin-slot" id="slot-3"></div>
+      <div class="pin-slot" id="slot-4"></div>
+    </div>
+
+    <div class="keypad">
+      <button class="key-btn" onclick="press('1')">1</button>
+      <button class="key-btn" onclick="press('2')">2</button>
+      <button class="key-btn" onclick="press('3')">3</button>
+      <button class="key-btn" onclick="press('4')">4</button>
+      <button class="key-btn" onclick="press('5')">5</button>
+      <button class="key-btn" onclick="press('6')">6</button>
+      <button class="key-btn" onclick="press('7')">7</button>
+      <button class="key-btn" onclick="press('8')">8</button>
+      <button class="key-btn" onclick="press('9')">9</button>
+      <button class="key-btn" onclick="press('*')">*</button>
+      <button class="key-btn" onclick="press('0')">0</button>
+      <button class="key-btn" onclick="press('#')">#</button>
+    </div>
+
+    <button class="btn-main" onclick="unlock()">INGRESAR</button>
+  </div>
+
+  <!-- VISTA 2: MENÚ PRINCIPAL -->
+  <div class="screen menu-screen" id="sc-menu">
+    <svg class="hw-logo-svg" viewBox="0 0 300 100">
+      <path d="M10,50 Q150,0 290,50 Q150,100 10,50 Z" fill="#e60012"/>
+      <text x="50%" y="60%" font-family="'Pacifico', cursive" font-size="32" fill="#ffeb3b" text-anchor="middle" font-weight="bold">Hot Wheels</text>
+    </svg>
+    
+    <h2 class="menu-title">Tengo esto para ti... ❤️</h2>
+
+    <div class="menu-buttons">
+      <button class="btn-option btn-opt-1" onclick="navTo('sc-carta')">✉️ Carta de amor</button>
+      <button class="btn-option btn-opt-2" onclick="navTo('sc-galaxia')">🌌 Galaxia Hot Wheels</button>
+      <button class="btn-option btn-opt-3" onclick="navTo('sc-ramo')">💐 Ramo de Carritos</button>
+    </div>
+  </div>
+
+  <!-- VISTA 3: CARTA -->
+  <div class="screen" id="sc-carta" style="background:#0d0d0d; justify-content:center;">
+    <div style="background:#fff; color:#111; padding:25px 20px; border-radius:12px; border:4px solid #e60012; width:90%; text-align:center;">
+      <h2 style="color:#e60012; font-family:'Pacifico', cursive; margin-bottom:15px;">Palabras que quiero dedicarte</h2>
+      <p style="font-weight:600; line-height:1.6; color:#333;">Mi amor,<br><br>Hoy quiero regalarte algo especial, porque tú eres mi campeón. Eres la chispa que enciende mi motor y la velocidad que acelera mi corazón.<br><br>Contigo cada día es una carrera llena de emoción. ¡Te amo hasta la meta y mucho más! 🏎️❤️</p>
+    </div>
+    <button class="btn-back-nav" onclick="navTo('sc-menu')">VOLVER</button>
+  </div>
+
+  <!-- VISTA 4: GALAXIA -->
+  <div class="screen galaxy-screen" id="sc-galaxia">
+    <div id="galaxy-stars"></div>
+    <div class="galaxy-spiral"></div>
+
+    <div class="galaxy-heart-center" onclick="showLove('¡Te Amo de aquí a las estrellas! ✨❤️')">
+      <svg class="galaxy-heart-svg" viewBox="0 0 24 24" fill="#ff0055"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <div class="galaxy-heart-label">Te Amo</div>
+    </div>
+
+    <div class="g-bubble" style="top: 15%; left: 8%;" onclick="showLove('Mi motor eres tú 🏎️')"><span>☁️ Mi motor eres tú</span></div>
+    <div class="g-bubble" style="top: 18%; right: 8%;" onclick="showLove('Eres mi meta 🏁')"><span>✨ Eres mi meta</span></div>
+    <div class="g-bubble" style="top: 32%; left: 5%;" onclick="showLove('Aceleras mis latidos 💓')"><span>💐 Aceleras mis latidos</span></div>
+    <div class="g-bubble" style="top: 36%; right: 5%;" onclick="showLove('Contigo no hay límites 🚀')"><span>💐 Contigo no hay límites</span></div>
+    <div class="g-bubble" style="top: 58%; left: 5%;" onclick="showLove('Nadie me frena si voy contigo 🛣️')"><span>💙 Nadie me frena si voy contigo</span></div>
+    <div class="g-bubble" style="top: 62%; right: 5%;" onclick="showLove('Eres mi piloto favorito 🏆')"><span>🏆 Eres mi piloto favorito</span></div>
+    <div class="g-bubble" style="top: 75%; left: 18%;" onclick="showLove('Juntos en cada curva ❤️')"><span>🚗 Juntos en cada curva</span></div>
+
+    <button class="btn-back-nav" onclick="navTo('sc-menu')">VOLVER</button>
+  </div>
+
+  <!-- VISTA 5: RAMO DE MARGARITAS AZULES Y CARRITOS -->
+  <div class="screen ramo-screen" id="sc-ramo">
+    <div class="ramo-title">Feliz Día de los Carritos Hot Wheels 🚗</div>
+
+    <div class="ramo-container">
+      <div class="ramo-wrap-back"></div>
+      <div class="ramo-wrap"></div>
+
+      <!-- MARGARITAS AZULES REALISTAS (SVG INCLUIDO DIRECTAMENTE) -->
+      <svg class="daisy-flower" style="top: 110px; left: 35px;" viewBox="0 0 100 100" onclick="showLove('Floreces mi corazón 💙')">
+        <circle cx="50" cy="50" r="14" fill="#fbbf24"/>
+        <g fill="#93c5fd">
+          <ellipse cx="50" cy="18" rx="7" ry="18"/>
+          <ellipse cx="50" cy="82" rx="7" ry="18"/>
+          <ellipse cx="18" cy="50" rx="18" ry="7"/>
+          <ellipse cx="82" cy="50" rx="18" ry="7"/>
+          <ellipse cx="27" cy="27" rx="7" ry="18" transform="rotate(-45 27 27)"/>
+          <ellipse cx="73" cy="73" rx="7" ry="18" transform="rotate(-45 73 73)"/>
+          <ellipse cx="73" cy="27" rx="7" ry="18" transform="rotate(45 73 27)"/>
+          <ellipse cx="27" cy="73" rx="7" ry="18" transform="rotate(45 27 73)"/>
+        </g>
+      </svg>
+
+      <svg class="daisy-flower" style="top: 80px; left: 155px;" viewBox="0 0 100 100" onclick="showLove('Eres mi lugar favorito 🌸')">
+        <circle cx="50" cy="50" r="14" fill="#fbbf24"/>
+        <g fill="#60a5fa">
+          <ellipse cx="50" cy="18" rx="7" ry="18"/>
+          <ellipse cx="50" cy="82" rx="7" ry="18"/>
+          <ellipse cx="18" cy="50" rx="18" ry="7"/>
+          <ellipse cx="82" cy="50" rx="18" ry="7"/>
+          <ellipse cx="27" cy="27" rx="7" ry="18" transform="rotate(-45 27 27)"/>
+          <ellipse cx="73" cy="73" rx="7" ry="18" transform="rotate(-45 73 73)"/>
+          <ellipse cx="73" cy="27" rx="7" ry="18" transform="rotate(45 73 27)"/>
+          <ellipse cx="27" cy="73" rx="7" ry="18" transform="rotate(45 27 73)"/>
+        </g>
+      </svg>
+
+      <svg class="daisy-flower" style="top: 120px; right: 35px;" viewBox="0 0 100 100" onclick="showLove('Sonrío por ti 😊')">
+        <circle cx="50" cy="50" r="14" fill="#fbbf24"/>
+        <g fill="#93c5fd">
+          <ellipse cx="50" cy="18" rx="7" ry="18"/>
+          <ellipse cx="50" cy="82" rx="7" ry="18"/>
+          <ellipse cx="18" cy="50" rx="18" ry="7"/>
+          <ellipse cx="82" cy="50" rx="18" ry="7"/>
+          <ellipse cx="27" cy="27" rx="7" ry="18" transform="rotate(-45 27 27)"/>
+          <ellipse cx="73" cy="73" rx="7" ry="18" transform="rotate(-45 73 73)"/>
+          <ellipse cx="73" cy="27" rx="7" ry="18" transform="rotate(45 73 27)"/>
+          <ellipse cx="27" cy="73" rx="7" ry="18" transform="rotate(45 27 73)"/>
+        </g>
+      </svg>
+
+      <!-- EMPAQUES BLISTER DE HOT WHEELS -->
+      <div class="blister-card" style="top: 170px; left: 25px; transform: rotate(-12deg);" onclick="showLove('Mi lugar feliz eres tú. ❤️')">
+        <svg width="60" viewBox="0 0 300 100"><path d="M10,50 Q150,0 290,50 Q150,100 10,50 Z" fill="#e60012"/><text x="50%" y="60%" font-size="30" fill="#fff" text-anchor="middle">HW</text></svg>
+        <div class="blister-bubble">
+          <svg width="55" viewBox="0 0 100 40">
+            <path d="M10,25 L25,8 L65,8 L85,18 L95,25 L95,32 L5,32 Z" fill="#fbbf24"/>
+            <circle cx="25" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/>
+            <circle cx="75" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="blister-footer">Toca aquí</div>
+      </div>
+
+      <div class="blister-card" style="top: 150px; left: 135px; transform: rotate(0deg);" onclick="showLove('Eres la casualidad más bonita. ✨')">
+        <svg width="60" viewBox="0 0 300 100"><path d="M10,50 Q150,0 290,50 Q150,100 10,50 Z" fill="#e60012"/><text x="50%" y="60%" font-size="30" fill="#fff" text-anchor="middle">HW</text></svg>
+        <div class="blister-bubble">
+          <svg width="55" viewBox="0 0 100 40">
+            <path d="M10,25 L20,10 L60,10 L85,20 L95,25 L95,32 L5,32 Z" fill="#2563eb"/>
+            <circle cx="25" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/>
+            <circle cx="75" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="blister-footer">Toca aquí</div>
+      </div>
+
+      <div class="blister-card" style="top: 180px; right: 20px; transform: rotate(14deg);" onclick="showLove('Gracias por existir. 💕')">
+        <svg width="60" viewBox="0 0 300 100"><path d="M10,50 Q150,0 290,50 Q150,100 10,50 Z" fill="#e60012"/><text x="50%" y="60%" font-size="30" fill="#fff" text-anchor="middle">HW</text></svg>
+        <div class="blister-bubble">
+          <svg width="55" viewBox="0 0 100 40">
+            <path d="M10,25 L20,10 L60,10 L85,20 L95,25 L95,32 L5,32 Z" fill="#10b981"/>
+            <circle cx="25" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/>
+            <circle cx="75" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="blister-footer">Toca aquí</div>
+      </div>
+
+      <!-- CARROS DEPORTIVOS SUELTOS -->
+      <div class="floating-car" style="top: 25px; left: 15px; transform: rotate(-25deg);" onclick="showLove('Pienso en ti más de lo que imaginas. 💭')">
+        <svg viewBox="0 0 100 40"><path d="M10,25 L20,10 L60,10 L85,20 L95,25 L95,32 L5,32 Z" fill="#dc2626"/><circle cx="25" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/><circle cx="75" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/></svg>
+      </div>
+
+      <div class="floating-car" style="top: 20px; right: 15px; transform: rotate(20deg);" onclick="showLove('Me encantas de aquí a las estrellas. 🌟')">
+        <svg viewBox="0 0 100 40"><path d="M10,25 L20,10 L60,10 L85,20 L95,25 L95,32 L5,32 Z" fill="#3b82f6"/><circle cx="25" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/><circle cx="75" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/></svg>
+      </div>
+
+      <div class="floating-car" style="top: 290px; left: 50px; transform: rotate(-8deg);" onclick="showLove('Contigo, cada día es especial. ✨')">
+        <svg viewBox="0 0 100 40"><path d="M10,25 L20,10 L60,10 L85,20 L95,25 L95,32 L5,32 Z" fill="#10b981"/><circle cx="25" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/><circle cx="75" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/></svg>
+      </div>
+
+      <div class="floating-car" style="top: 300px; right: 40px; transform: rotate(10deg);" onclick="showLove('Todo es mejor contigo a mi lado. 🏁')">
+        <svg viewBox="0 0 100 40"><path d="M10,25 L20,10 L60,10 L85,20 L95,25 L95,32 L5,32 Z" fill="#f59e0b"/><circle cx="25" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/><circle cx="75" cy="32" r="7" fill="#111" stroke="#fff" stroke-width="2"/></svg>
+      </div>
+
+    </div>
+
+    <button class="btn-back-nav" onclick="navTo('sc-menu')">VOLVER</button>
+  </div>
+
+  <!-- TARJETA EMBLEMÁTICA DE HOT WHEELS QUE APARECE AL DAR CLIC -->
+  <div class="modal-backdrop" id="love-modal">
+    <div class="modal-hw-card">
+      <svg width="120" viewBox="0 0 300 100"><path d="M10,50 Q150,0 290,50 Q150,100 10,50 Z" fill="#facc15"/><text x="50%" y="60%" font-size="30" fill="#dc2626" text-anchor="middle" font-weight="bold">Hot Wheels</text></svg>
+      <p id="love-text">Frase de amor...</p>
+      <button class="btn-modal-close" onclick="closeLove()">Cerrar ✖</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let pin = "";
+
+  function press(n) {
+    if (pin.length < 4) {
+      pin += n;
+      renderPin();
+    }
+  }
+
+  function renderPin() {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(`slot-${i}`);
+      el.textContent = pin[i - 1] ? "❤" : "";
+      el.style.color = "#dc2626";
+    }
+  }
+
+  function unlock() {
+    if (pin.length === 4) {
+      navTo('sc-menu');
+    } else {
+      alert("Ingresa un código de 4 dígitos");
+    }
+  }
+
+  function navTo(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  function showLove(msg) {
+    document.getElementById('love-text').textContent = msg;
+    document.getElementById('love-modal').style.display = 'flex';
+  }
+
+  function closeLove() {
+    document.getElementById('love-modal').style.display = 'none';
+  }
+
+  // Fondo de estrellas de la galaxia
+  const starsBox = document.getElementById('galaxy-stars');
+  for (let i = 0; i < 90; i++) {
+    const star = document.createElement('div');
+    star.style.position = 'absolute';
+    star.style.background = '#ffffff';
+    star.style.borderRadius = '50%';
+    star.style.width = (Math.random() * 3 + 1) + 'px';
+    star.style.height = star.style.width;
+    star.style.top = Math.random() * 100 + '%';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.opacity = Math.random();
+    starsBox.appendChild(star);
+  }
+</script>
+
+</body>
+</html>
